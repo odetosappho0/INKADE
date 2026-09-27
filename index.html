@@ -386,8 +386,8 @@
 
     <script>
     // JSONBIN PUBLIC CONFIGURATION (REPLACE WITH YOUR BIN ID & MASTER KEY FOR YOUR OWN DATABASE)
-    const JSONBIN_BIN_ID = "YOUR_BIN_ID_HERE";
-    const JSONBIN_MASTER_KEY = "YOUR_MASTER_KEY_HERE";
+    const JSONBIN_BIN_ID = "6ab8d0e0ffd5d1605333d21a";
+    const JSONBIN_MASTER_KEY = "$2a$10$4bDwexij7nibpdcjTFnHgun6HiqhMuDrjcZvH9zrQdtViAFDxepTW";
 
     let currentScore = 0;
     let highScore = localStorage.getItem('inkade_crossword_highscore') ? parseInt(localStorage.getItem('inkade_crossword_highscore')) : 0;
@@ -493,74 +493,76 @@
     }
 
     async function fetchPublicLeaderboard() {
-        const listElem = document.getElementById('leaderboard-list');
+    const listElem = document.getElementById('leaderboard-list');
 
-        if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE") {
-            // Fallback local view if JSONBin hasn't been linked yet
-            const name = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
-            const score = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
-            listElem.innerHTML = `<li><span>1. <strong>${name}</strong></span><span><strong>${score} PTS</strong></span></li>`;
+    if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE") {
+        const name = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
+        const score = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
+        listElem.innerHTML = `<li><span>1. <strong>${name}</strong></span><span><strong>${score} PTS</strong></span></li>`;
+        return;
+    }
+
+    try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+        });
+        const data = await res.json();
+        
+        // Extract array from the record object
+        const scores = (data.record && data.record.record) ? data.record.record : (Array.isArray(data.record) ? data.record : []);
+
+        scores.sort((a, b) => b.score - a.score);
+
+        if (scores.length === 0) {
+            listElem.innerHTML = '<li><span>No public scores yet! Be the first!</span><span>0 PTS</span></li>';
             return;
         }
 
-        try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-                headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-            });
-            const data = await res.json();
-            const scores = data.record || [];
-
-            scores.sort((a, b) => b.score - a.score);
-
-            if (scores.length === 0) {
-                listElem.innerHTML = '<li><span>No public scores yet! Be the first!</span><span>0 PTS</span></li>';
-                return;
-            }
-
-            listElem.innerHTML = scores.slice(0, 5).map((entry, idx) => `
-                <li>
-                    <span>${idx === 0 ? '🥇' : idx + 1 + '.'} <strong>${entry.name}</strong></span>
-                    <span><strong>${entry.score} PTS</strong></span>
-                </li>
-            `).join('');
-        } catch (err) {
-            listElem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
-        }
+        listElem.innerHTML = scores.slice(0, 5).map((entry, idx) => `
+            <li>
+                <span>${idx === 0 ? '🥇' : idx + 1 + '.'} <strong>${entry.name}</strong></span>
+                <span><strong>${entry.score} PTS</strong></span>
+            </li>
+        `).join('');
+    } catch (err) {
+        listElem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
     }
+}
 
-    async function submitPublicScore(name, score) {
-        if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE" || score <= 0) return;
+async function submitPublicScore(name, score) {
+    if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE" || score <= 0) return;
 
-        try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-                headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-            });
-            const data = await res.json();
-            let scores = data.record || [];
+    try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+            headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+        });
+        const data = await res.json();
+        
+        let scores = (data.record && data.record.record) ? data.record.record : (Array.isArray(data.record) ? data.record : []);
 
-            const existingIdx = scores.findIndex(s => s.name === name);
-            if (existingIdx !== -1) {
-                if (score > scores[existingIdx].score) {
-                    scores[existingIdx].score = score;
-                }
-            } else {
-                scores.push({ name, score });
+        const existingIdx = scores.findIndex(s => s.name === name);
+        if (existingIdx !== -1) {
+            if (score > scores[existingIdx].score) {
+                scores[existingIdx].score = score;
             }
-
-            await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': JSONBIN_MASTER_KEY
-                },
-                body: JSON.stringify(scores)
-            });
-
-            fetchPublicLeaderboard();
-        } catch (err) {
-            console.error("Score submission error:", err);
+        } else {
+            scores.push({ name, score });
         }
+
+        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_MASTER_KEY
+            },
+            body: JSON.stringify({ record: scores })
+        });
+
+        fetchPublicLeaderboard();
+    } catch (err) {
+        console.error("Score submission error:", err);
     }
+}
 
     function showCustomModal(title, text, onContinue) {
         document.getElementById('modal-heading').innerText = title;

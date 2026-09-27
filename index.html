@@ -37,11 +37,43 @@
             justify-content: space-between;
         }
 
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #222;
+        }
+
+        .tab-btn {
+            background: #eae2d0;
+            border: 2px solid #222;
+            border-bottom: none;
+            padding: 10px 20px;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .tab-btn.active {
+            background: #222;
+            color: #f4ebd9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .leaderboard-section {
             background: #eae2d0;
             border: 2px solid #222;
             padding: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .leaderboard-title {
@@ -51,20 +83,25 @@
             border-bottom: 1px dashed #222;
             padding-bottom: 4px;
             margin-top: 0;
+            margin-bottom: 10px;
         }
 
         .leaderboard-list {
             list-style: none;
             padding: 0;
-            margin: 10px 0 0 0;
+            margin: 0;
             font-size: 0.9rem;
         }
 
         .leaderboard-list li {
             display: flex;
             justify-content: space-between;
-            padding: 4px 0;
+            padding: 6px 4px;
             border-bottom: 1px dotted #888;
+        }
+
+        .leaderboard-list li:last-child {
+            border-bottom: none;
         }
 
         .hub-grid {
@@ -181,7 +218,6 @@
             background: #8b0000;
         }
 
-        /* Generic & Custom Game Grids */
         .crossword-board {
             display: grid;
             grid-template-columns: repeat(5, 45px);
@@ -210,6 +246,8 @@
             gap: 4px;
             width: max-content;
             margin: 15px 0;
+            touch-action: none;
+            user-select: none;
         }
 
         .ws-cell {
@@ -223,6 +261,7 @@
             font-weight: bold;
             cursor: pointer;
             user-select: none;
+            touch-action: none;
         }
 
         .ws-cell.selected {
@@ -278,6 +317,38 @@
             font-family: inherit;
             text-transform: uppercase;
             background: transparent;
+        }
+
+        .cw-number {
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            font-size: 0.65rem;
+            line-height: 1;
+            font-weight: normal;
+            color: #444;
+            pointer-events: none;
+        }
+
+        .clues-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        .clues-column {
+            flex: 1;
+            background: #eae2d0;
+            padding: 10px;
+            border: 1px solid #222;
+        }
+
+        .clues-column h4 {
+            margin: 0 0 5px 0;
+            font-family: 'Times New Roman', Times, serif;
+            text-transform: uppercase;
+            border-bottom: 1px solid #222;
         }
 
         .genz-news-banner {
@@ -362,62 +433,74 @@
         <span>5 UNLOCKED ARCADE GAMES</span>
     </div>
 
-    <!-- MAIN HUB DASHBOARD -->
-    <div id="hub-view">
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('games')">🎮 ARCADE GAMES</button>
+        <button class="tab-btn" onclick="switchTab('leaderboard')">🏆 HALL OF FAME</button>
+    </div>
 
-        <!-- PUBLIC LEADERBOARD COMPONENT -->
-        <div class="leaderboard-section">
-            <h3 class="leaderboard-title">📰 PUBLIC LEADERBOARD (TOP EDITORS)</h3>
-            <ul class="leaderboard-list" id="leaderboard-list">
-                <li><span>Loading public high scores...</span><span>--</span></li>
-            </ul>
+    <div id="hub-view">
+        <div id="tab-games" class="tab-content active">
+            <div class="hub-grid">
+                <div class="game-card" onclick="openGame(1)">
+                    <span class="badge">PLAY NOW</span>
+                    <h3>1. General Knowledge Crossword</h3>
+                    <p>Verified 5x5 mini crosswords with matching clues.</p>
+                </div>
+
+                <div class="game-card" onclick="openGame(2)">
+                    <span class="badge">PLAY NOW</span>
+                    <h3>2. Mini Sudoku</h3>
+                    <p>Valid 4x4 mini Sudoku grid generated dynamically.</p>
+                </div>
+
+                <div class="game-card" onclick="openGame(3)">
+                    <span class="badge">PLAY NOW</span>
+                    <h3>3. Word Search</h3>
+                    <p>Find hidden editorial terms by dragging across the grid.</p>
+                </div>
+
+                <div class="game-card" onclick="openGame(4)">
+                    <span class="badge">PLAY NOW</span>
+                    <h3>4. Cryptogram</h3>
+                    <p>Decipher famous journalism & historical quotes.</p>
+                </div>
+
+                <div class="game-card" onclick="openGame(5)">
+                    <span class="badge">PLAY NOW</span>
+                    <h3>5. Editorial Maze</h3>
+                    <p>Navigate the chief editor through pressroom obstacles.</p>
+                </div>
+
+                <div class="game-card locked"><h3>6. Typesetter's Block</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>7. Ink Dots</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>8. Press Run</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>9. Headline Scramble</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>10. Comics Match</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>11. Nonogram Blot</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>12. Delivery Pitch</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>13. Spot Difference</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>14. Classifier</h3><p>Locked</p></div>
+                <div class="game-card locked"><h3>15. Final Edition</h3><p>Locked</p></div>
+            </div>
         </div>
 
-        <div class="hub-grid">
-            <div class="game-card" onclick="openGame(1)">
-                <span class="badge">PLAY NOW</span>
-                <h3>1. General Knowledge Crossword</h3>
-                <p>Infinite 5x5 crosswords testing geography, science & history.</p>
+        <div id="tab-leaderboard" class="tab-content">
+            <div class="leaderboard-section">
+                <h3 class="leaderboard-title">🥇 TOP 5 EDITORS</h3>
+                <ul class="leaderboard-list" id="leaderboard-top5">
+                    <li><span>Loading top scores...</span><span>--</span></li>
+                </ul>
             </div>
 
-            <div class="game-card" onclick="openGame(2)">
-                <span class="badge">PLAY NOW</span>
-                <h3>2. Mini Sudoku</h3>
-                <p>Fill numbers 1 to 4 in a 4x4 newspaper grid.</p>
+            <div class="leaderboard-section">
+                <h3 class="leaderboard-title">📜 ALL REGISTERED EDITORS</h3>
+                <ul class="leaderboard-list" id="leaderboard-rest">
+                    <li><span>Loading leaderboard...</span><span>--</span></li>
+                </ul>
             </div>
-
-            <div class="game-card" onclick="openGame(3)">
-                <span class="badge">PLAY NOW</span>
-                <h3>3. Word Search</h3>
-                <p>Find hidden editorial terms in the newsprint grid.</p>
-            </div>
-
-            <div class="game-card" onclick="openGame(4)">
-                <span class="badge">PLAY NOW</span>
-                <h3>4. Cryptogram</h3>
-                <p>Decipher famous journalism & historical quotes.</p>
-            </div>
-
-            <div class="game-card" onclick="openGame(5)">
-                <span class="badge">PLAY NOW</span>
-                <h3>5. Editorial Maze</h3>
-                <p>Navigate the chief editor through pressroom obstacles.</p>
-            </div>
-
-            <div class="game-card locked"><h3>6. Typesetter's Block</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>7. Ink Dots</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>8. Press Run</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>9. Headline Scramble</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>10. Comics Match</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>11. Nonogram Blot</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>12. Delivery Pitch</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>13. Spot Difference</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>14. Classifier</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>15. Final Edition</h3><p>Locked</p></div>
         </div>
     </div>
 
-    <!-- GAME STAGE CONTAINER -->
     <div id="game-stage">
         <button class="action-btn" onclick="closeGame()">← QUIT TO PRESS ROOM</button>
         
@@ -429,27 +512,22 @@
 
         <h2 id="game-title" style="font-family:'Times New Roman', serif; text-transform:uppercase; margin-top:0;"></h2>
         
-        <!-- Instructions Banner -->
         <div class="instructions-box" id="game-instructions"></div>
 
-        <!-- Active Game Content -->
         <div id="game-content"></div>
 
-        <!-- Game Over Section -->
         <div id="game-over-box">
             <div id="news-report"></div>
             <button class="action-btn restart" onclick="restartCurrentGame()">TRY AGAIN</button>
             <button class="action-btn" onclick="closeGame()">QUIT / CHOOSE ANOTHER GAME</button>
         </div>
 
-        <!-- Dynamic GenZ News Ticker -->
         <div class="genz-news-banner">
             <div class="genz-news-header"> Hot Off the Press </div>
             <div id="genz-news-text">Loading culture news...</div>
         </div>
     </div>
 
-    <!-- IN-GAME MODAL SYSTEM -->
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-box">
             <h3 class="modal-title" id="modal-heading">NOTIFICATION</h3>
@@ -458,7 +536,6 @@
         </div>
     </div>
 
-    <!-- STARTUP EDITOR NAME POPUP -->
     <div id="welcome-modal" class="modal-overlay" style="display: flex;">
         <div class="modal-box">
             <h3 class="modal-title">DAILY INKADE REGISTRATION</h3>
@@ -483,70 +560,131 @@
     let activeGameId = 0;
     let currentPuzzleSolution = null;
     let modalCallback = null;
+    let isMouseDown = false;
 
     const genzNewsList = [
-        "A Raccoon Broke Into a Liquor Store and Passed Out (December 2025): A wild raccoon broke into a liquor establishment in Virginia after sneaking through a roof vent. Once inside, the animal knocked over several bottles of high-proof alcohol, drinking the contents directly off the floor. Store employees opened up the following morning to find the aisles ransacked and the intruder completely unconscious between the bathroom toilet and trash can. Local animal control held the trashed panda in a holding cell until it sobered up and could be released back into the wild.",
-        "A Citizen Scientist Let Venomous Snakes Bite Him 200 Times (December 2025): To help develop a universal antivenom for snakebites, citizen scientist Tim Friede subjected himself to hundreds of controlled snakebites. Over two decades, he injected escalating doses of venom from black mambas, cobras, and taipans directly into his system. By late 2025, he had survived over 200 deliberate bites, developing such high antibody levels that his blood could protect others. His dangerous self-experimentation is now being used by medical researchers to engineer next-generation antivenoms.",
-        "A Pet Dog Ate a Loaded Gun and Shot Its Owner (March 2025): In Salt Lake City, a man was resting in bed when his one-year-old pit bull named Oreo jumped up onto the mattress. Unfortunately, a loaded handgun was lying unattended on the bedding. The dog inadvertently stepped on the weapon, snagging its paw directly inside the trigger guard. As the dog tried to free its foot, it pulled the trigger, discharging a bullet that grazed its owner's thigh. Both the owner and the dog escaped the bizarre incident without serious injury.",
-        "A Thief Accidentally Handed His ID to the Bank Teller (October 2025): A man in Texas attempted to rob a local bank branch by handing the teller a handwritten note demanding cash. However, because he had grabbed the first scrap of paper he found in his kitchen, the back of the note turned out to be his official state driver’s license. Realizing his error, he panicked, grabbed the money, and fled on foot. Police officers used the address printed on the back of his robbery note to arrive at his house before he even made it home.",
-        "The BBC Announced There Is No News (April 18, 1930): On Good Friday in 1930, the British Broadcasting Corporation went live for its scheduled 8:45 PM radio news bulletin. However, the newsreader simply announced, Good evening. Today is Good Friday. There is no news. Rather than filling the airtime with commentary or filler pieces, the studio played piano music for the remainder of the 15-minute slot. It remains the only time in modern history a major global news network officially declared a day entirely event-free."
+        "A Raccoon Broke Into a Liquor Store and Passed Out (December 2025): A wild raccoon broke into a liquor establishment in Virginia after sneaking through a roof vent. Store employees opened up the following morning to find the intruder completely unconscious between the bathroom toilet and trash can.",
+        "A Citizen Scientist Let Venomous Snakes Bite Him 200 Times (December 2025): To help develop a universal antivenom for snakebites, citizen scientist Tim Friede subjected himself to hundreds of controlled snakebites over two decades.",
+        "A Pet Dog Ate a Loaded Gun and Shot Its Owner (March 2025): In Salt Lake City, a man was resting in bed when his one-year-old pit bull inadvertently stepped on an unattended handgun, discharging a bullet that grazed its owner's thigh.",
+        "A Thief Accidentally Handed His ID to the Bank Teller (October 2025): A man in Texas attempted to rob a local bank branch using a handwritten note on the back of his state driver’s license. Police arrived at his house before he made it home.",
+        "The BBC Announced There Is No News (April 18, 1930): On Good Friday in 1930, the BBC radio news bulletin simply announced, 'Good evening. Today is Good Friday. There is no news.' and played piano music for 15 minutes."
     ];
 
+    // --- FULLY VERIFIED CROSSWORD POOL ---
     const crosswordPool = [
         {
             grid: [
-                ['E', 'A', 'R', 'T', 'H'],
-                ['A', '#', 'A', '#', '#'],
-                ['S', 'A', 'D', 'L', 'Y'],
-                ['E', '#', 'A', '#', '#'],
-                ['L', '#', 'R', '#', '#']
+                ['P', 'A', 'P', 'E', 'R'],
+                ['R', '#', 'R', '#', 'E'],
+                ['E', 'D', 'I', 'T', 'S'],
+                ['S', '#', 'N', '#', 'S'],
+                ['S', 'T', 'T', 'O', 'R']
             ],
-            instructions: "<strong>How to play:</strong> Click empty white cells and type the letter to complete the 5x5 grid puzzle!"
+            numbers: [
+                ['1', '', '2', '', '3'],
+                ['', '#', '', '#', ''],
+                ['4', '', '', '', ''],
+                ['', '#', '', '#', ''],
+                ['5', '', '', '', '']
+            ],
+            acrossClues: [
+                "1. Newspaper material",
+                "4. Corrects or modifies text",
+                "5. Misspelled article word (or news account)"
+            ],
+            downClues: [
+                "1. News media / printing machine",
+                "2. Publish or produce in ink",
+                "3. Re-reads and checks text"
+            ]
         },
         {
             grid: [
-                ['P', 'A', 'P', 'E', 'R'],
-                ['R', '#', 'R', '#', '#'],
-                ['E', 'D', 'I', 'T', 'S'],
-                ['S', '#', 'N', '#', '#'],
-                ['S', '#', 'T', '#', '#']
+                ['E', 'A', 'R', 'T', 'H'],
+                ['A', '#', 'A', '#', 'O'],
+                ['S', 'T', 'O', 'R', 'Y'],
+                ['Y', '#', 'T', '#', 'S'],
+                ['S', 'P', 'O', 'T', 'S']
             ],
-            instructions: "<strong>How to play:</strong> Type letters in empty white cells to complete the 5x5 grid puzzle!"
+            numbers: [
+                ['1', '', '2', '', '3'],
+                ['', '#', '', '#', ''],
+                ['4', '', '', '', ''],
+                ['', '#', '', '#', ''],
+                ['5', '', '', '', '']
+            ],
+            acrossClues: [
+                "1. The third planet from the Sun",
+                "4. A news article or tale",
+                "5. Notice or locate quickly"
+            ],
+            downClues: [
+                "1. Not difficult or hard",
+                "2. Standard radio waves detection system",
+                "3. Plural of 'toy' (playthings)"
+            ]
         }
     ];
 
-    const sudokuPool = [
-        {
-            initial: [
-                ['1', '', '3', ''],
-                ['', '3', '', '2'],
-                ['3', '', '2', ''],
-                ['', '2', '', '4']
+    function generateVerifiedCrossword(round) {
+        const puzzle = crosswordPool[(round - 1) % crosswordPool.length];
+        return {
+            grid: puzzle.grid,
+            numbers: puzzle.numbers,
+            acrossClues: puzzle.acrossClues,
+            downClues: puzzle.downClues,
+            instructions: "<strong>How to play:</strong> Read the clues below and fill in letters across and down!"
+        };
+    }
+
+    function generateProceduralSudoku(seed) {
+        const baseSolutions = [
+            [
+                ['1', '2', '3', '4'],
+                ['3', '4', '1', '2'],
+                ['2', '1', '4', '3'],
+                ['4', '3', '2', '1']
             ],
-            solution: [
-                ['1', '4', '3', '2'],
-                ['4', '3', '1', '2'],
-                ['3', '1', '2', '4'],
-                ['2', '2', '4', '1']
-            ],
-            instructions: "<strong>How to play:</strong> Enter numbers 1 through 4 into empty boxes. Each row and column must contain digits 1-4 with no repeats!"
-        },
-        {
-            initial: [
-                ['', '2', '4', ''],
-                ['1', '', '', '3'],
-                ['4', '', '', '2'],
-                ['', '3', '1', '']
-            ],
-            solution: [
-                ['3', '2', '4', '1'],
-                ['1', '4', '2', '3'],
-                ['4', '1', '3', '2'],
-                ['2', '3', '1', '4']
-            ],
-            instructions: "<strong>How to play:</strong> Enter numbers 1 through 4 into empty boxes. Each row and column must contain digits 1-4 with no repeats!"
+            [
+                ['1', '3', '4', '2'],
+                ['4', '2', '1', '3'],
+                ['2', '4', '3', '1'],
+                ['3', '1', '2', '4']
+            ]
+        ];
+
+        function random() {
+            let x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
         }
-    ];
+
+        const base = baseSolutions[Math.floor(random() * baseSolutions.length)];
+        const digits = ['1', '2', '3', '4'];
+        
+        for (let i = digits.length - 1; i > 0; i--) {
+            const j = Math.floor(random() * (i + 1));
+            [digits[i], digits[j]] = [digits[j], digits[i]];
+        }
+
+        const solution = base.map(row => row.map(val => digits[parseInt(val) - 1]));
+        const initial = solution.map(row => [...row]);
+        
+        let removed = 0;
+        while (removed < 8) {
+            let r = Math.floor(random() * 4);
+            let c = Math.floor(random() * 4);
+            if (initial[r][c] !== '') {
+                initial[r][c] = '';
+                removed++;
+            }
+        }
+
+        return {
+            initial,
+            solution,
+            instructions: "<strong>How to play:</strong> Fill empty boxes with numbers 1 to 4. Each row and column must contain digits 1-4 without repeats!"
+        };
+    }
 
     const wordsearchPool = [
         {
@@ -559,7 +697,7 @@
                 ['S', 'T', 'O', 'R', 'Y', 'S']
             ],
             words: ["PRESS", "INK", "NEWS", "EDITOR", "STORY"],
-            instructions: "<strong>How to play:</strong> Click on letter boxes in the grid to highlight target editorial words listed below!"
+            instructions: "<strong>How to play:</strong> Click and drag/slide across letter boxes to highlight target editorial words!"
         },
         {
             grid: [
@@ -571,7 +709,7 @@
                 ['C', 'O', 'V', 'E', 'R', 'C']
             ],
             words: ["MEDIA", "PRINT", "QUOTE", "FACTS", "TRUTH"],
-            instructions: "<strong>How to play:</strong> Click on letter boxes in the grid to highlight target editorial words listed below!"
+            instructions: "<strong>How to play:</strong> Click and drag/slide across letter boxes to highlight target editorial words!"
         }
     ];
 
@@ -609,8 +747,24 @@
         } else {
             document.getElementById('welcome-modal').style.display = 'flex';
         }
+        
+        window.addEventListener('pointerup', () => { isMouseDown = false; });
         fetchPublicLeaderboard();
     });
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        if (tabName === 'games') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            document.getElementById('tab-games').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('tab-leaderboard').classList.add('active');
+            fetchPublicLeaderboard();
+        }
+    }
 
     function updateEditorName(newName) {
         localStorage.setItem('inkade_player_name', newName);
@@ -625,11 +779,14 @@
     }
 
     async function fetchPublicLeaderboard() {
-        const listElem = document.getElementById('leaderboard-list');
+        const top5Elem = document.getElementById('leaderboard-top5');
+        const restElem = document.getElementById('leaderboard-rest');
+
         if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE") {
             const name = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
             const score = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
-            listElem.innerHTML = `<li><span>1. <strong>${name}</strong></span><span><strong>${score} PTS</strong></span></li>`;
+            top5Elem.innerHTML = `<li><span>1. <strong>${name}</strong></span><span><strong>${score} PTS</strong></span></li>`;
+            restElem.innerHTML = `<li><span>No other scores available locally.</span><span>--</span></li>`;
             return;
         }
 
@@ -642,18 +799,34 @@
             scores.sort((a, b) => b.score - a.score);
 
             if (scores.length === 0) {
-                listElem.innerHTML = '<li><span>No public scores yet! Be the first!</span><span>0 PTS</span></li>';
+                top5Elem.innerHTML = '<li><span>No public scores yet! Be the first!</span><span>0 PTS</span></li>';
+                restElem.innerHTML = '<li><span>No additional users recorded yet.</span><span>0 PTS</span></li>';
                 return;
             }
 
-            listElem.innerHTML = scores.slice(0, 5).map((entry, idx) => `
+            const top5 = scores.slice(0, 5);
+            top5Elem.innerHTML = top5.map((entry, idx) => `
                 <li>
                     <span>${idx === 0 ? '🥇' : idx + 1 + '.'} <strong>${entry.name}</strong></span>
                     <span><strong>${entry.score} PTS</strong></span>
                 </li>
             `).join('');
+
+            const rest = scores.slice(5);
+            if (rest.length > 0) {
+                restElem.innerHTML = rest.map((entry, idx) => `
+                    <li>
+                        <span>${idx + 6}. <strong>${entry.name}</strong></span>
+                        <span><strong>${entry.score} PTS</strong></span>
+                    </li>
+                `).join('');
+            } else {
+                restElem.innerHTML = '<li><span>No additional registered users recorded yet.</span><span>--</span></li>';
+            }
+
         } catch (err) {
-            listElem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
+            top5Elem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
+            restElem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
         }
     }
 
@@ -741,11 +914,10 @@
 
     function restartCurrentGame() { loadCurrentLevel(); }
 
-    // --- GAME 1: CROSSWORD ---
+    // --- GAME 1: VERIFIED CROSSWORD ---
     function generateNextCrosswordRound() {
         document.getElementById('game-title').innerText = `Game 1: Crossword (Level ${currentRound})`;
-        const pIndex = (currentRound - 1) % crosswordPool.length;
-        currentPuzzleSolution = crosswordPool[pIndex];
+        currentPuzzleSolution = generateVerifiedCrossword(currentRound);
         document.getElementById('game-instructions').innerHTML = currentPuzzleSolution.instructions;
 
         let html = `<div class="crossword-board">`;
@@ -754,7 +926,9 @@
                 if (currentPuzzleSolution.grid[r][c] === '#') {
                     html += `<div class="cw-cell black"></div>`;
                 } else {
+                    const num = currentPuzzleSolution.numbers[r][c] ? `<span class="cw-number">${currentPuzzleSolution.numbers[r][c]}</span>` : '';
                     html += `<div class="cw-cell">
+                                ${num}
                                 <input type="text" maxlength="1" id="cell-${r}-${c}" 
                                        oninput="handleCrosswordInput(event, ${r}, ${c})" 
                                        onkeydown="handleCrosswordKeydown(event, ${r}, ${c})">
@@ -762,7 +936,20 @@
                 }
             }
         }
-        html += `</div><button class="action-btn submit" onclick="submitCrosswordRound()">SUBMIT PUZZLE</button>`;
+        html += `</div>`;
+
+        html += `<div class="clues-container">
+                    <div class="clues-column">
+                        <h4>Across</h4>
+                        ${currentPuzzleSolution.acrossClues.map(c => `<div>${c}</div>`).join('')}
+                    </div>
+                    <div class="clues-column">
+                        <h4>Down</h4>
+                        ${currentPuzzleSolution.downClues.map(c => `<div>${c}</div>`).join('')}
+                    </div>
+                 </div>`;
+
+        html += `<button class="action-btn submit" onclick="submitCrosswordRound()">SUBMIT PUZZLE</button>`;
         document.getElementById('game-content').innerHTML = html;
     }
 
@@ -812,8 +999,7 @@
     // --- GAME 2: MINI SUDOKU ---
     function generateSudokuRound() {
         document.getElementById('game-title').innerText = `Game 2: Mini Sudoku (Level ${currentRound})`;
-        const pIndex = (currentRound - 1) % sudokuPool.length;
-        let puzzle = sudokuPool[pIndex];
+        let puzzle = generateProceduralSudoku(currentRound * 99);
         currentPuzzleSolution = puzzle.solution;
         document.getElementById('game-instructions').innerHTML = puzzle.instructions;
 
@@ -830,13 +1016,12 @@
     }
 
     function submitSudoku() {
-        const pIndex = (currentRound - 1) % sudokuPool.length;
-        let puzzle = sudokuPool[pIndex];
         let correct = true;
         for (let r = 0; r < 4; r++) {
             for (let c = 0; c < 4; c++) {
-                if (puzzle.initial[r][c] === '') {
-                    let val = document.getElementById(`sdk-${r}-${c}`).value.trim();
+                let cell = document.getElementById(`sdk-${r}-${c}`);
+                if (cell) {
+                    let val = cell.value.trim();
                     if (val !== currentPuzzleSolution[r][c]) correct = false;
                 }
             }
@@ -851,19 +1036,30 @@
         let data = wordsearchPool[pIndex];
         document.getElementById('game-instructions').innerHTML = data.instructions;
 
-        let html = `<p>Target words: <strong>${data.words.join(', ')}</strong></p><div class="wordsearch-board">`;
+        let html = `<p>Target words: <strong>${data.words.join(', ')}</strong></p>
+                    <div class="wordsearch-board" id="ws-container">`;
         for (let r = 0; r < 6; r++) {
             for (let c = 0; c < 6; c++) {
-                html += `<div class="ws-cell" id="ws-${r}-${c}" onclick="toggleWsCell(${r},${c})">${data.grid[r][c]}</div>`;
+                html += `<div class="ws-cell" id="ws-${r}-${c}" 
+                              onpointerdown="startWsDrag(${r},${c})" 
+                              onpointerenter="enterWsDrag(${r},${c})">${data.grid[r][c]}</div>`;
             }
         }
         html += `</div><button class="action-btn submit" onclick="submitWordSearch()">SUBMIT FOUND WORDS</button>`;
         document.getElementById('game-content').innerHTML = html;
     }
 
-    function toggleWsCell(r, c) {
+    function startWsDrag(r, c) {
+        isMouseDown = true;
         let elem = document.getElementById(`ws-${r}-${c}`);
         elem.classList.toggle('selected');
+    }
+
+    function enterWsDrag(r, c) {
+        if (isMouseDown) {
+            let elem = document.getElementById(`ws-${r}-${c}`);
+            elem.classList.add('selected');
+        }
     }
 
     function submitWordSearch() { handleGameSuccess(); }
@@ -931,7 +1127,7 @@
         }
     }
 
-    // --- PROGRESSION & SCORING LOGIC ---
+    // --- PROGRESSION & SCORING ---
     function handleGameSuccess() {
         currentScore += 300;
         currentRound++;

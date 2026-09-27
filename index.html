@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE DAILY INKADE - 15 Newspaper Arcade Games</title>
+    <style>
+        body {
+            background-color: #f4ebd9;
+            color: #111;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            max-width: 950px;
+            margin: 0 auto;
+            border: 3px double #222;
+        }
+
+        h1 {
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border-bottom: 4px double #111;
+            padding-bottom: 5px;
+            margin-bottom: 2px;
+            font-size: 2.8rem;
+        }
+
+        .masthead {
+            text-align: center;
+            font-style: italic;
+            border-bottom: 1px solid #111;
+            padding-bottom: 6px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Hub Grid Layout */
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            background: #eae2d0;
+            border: 2px solid #222;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            position: relative;
+        }
+
+        .game-card:hover {
+            background: #dfd5c0;
+            transform: translateY(-2px);
+        }
+
+        .game-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        .game-card h3 {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid #444;
+        }
+
+        .game-card p {
+            font-size: 0.8rem;
+            margin: 0;
+            color: #444;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #222;
+            color: #f4ebd9;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            text-transform: uppercase;
+        }
+
+        /* Active Stage View */
+        #game-stage {
+            display: none;
+            background: #fff8eb;
+            border: 2px solid #222;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background: #222;
+            color: #f4ebd9;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border: 1px solid #000;
+        }
+
+        .action-btn {
+            background: #222;
+            color: #f4ebd9;
+            border: none;
+            padding: 10px 18px;
+            font-family: inherit;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 8px;
+            margin-top: 10px;
+        }
+
+        .action-btn:hover {
+            background: #444;
+        }
+
+        .action-btn.submit {
+            background: #006600;
+        }
+
+        .action-btn.restart {
+            background: #8b0000;
+        }
+
+        /* Crossword Specific Grid UI */
+        .crossword-board {
+            display: grid;
+            grid-template-columns: repeat(5, 45px);
+            grid-template-rows: repeat(5, 45px);
+            gap: 2px;
+            background: #222;
+            padding: 2px;
+            width: max-content;
+            margin: 15px 0;
+        }
+
+        .cw-cell {
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .cw-cell.black {
+            background: #222;
+        }
+
+        .cw-cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 1.3rem;
+            font-family: inherit;
+            text-transform: uppercase;
+            background: transparent;
+        }
+
+        .cw-cell .num {
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            font-size: 0.65rem;
+            color: #333;
+            pointer-events: none;
+            font-weight: bold;
+        }
+
+        .clues-box {
+            font-size: 0.85rem;
+            margin-top: 10px;
+            line-height: 1.6;
+            background: #eae2d0;
+            padding: 12px;
+            border: 1px solid #333;
+        }
+
+        /* Newspaper Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #fff8eb;
+            border: 4px double #111;
+            padding: 25px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid #222;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+
+        .modal-body {
+            font-size: 0.95rem;
+            margin: 15px 0 20px 0;
+            line-height: 1.4;
+        }
+
+        /* Game Over Section */
+        #game-over-box {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border: 3px double #8b0000;
+        }
+
+        #news-report {
+            color: #8b0000;
+            font-weight: bold;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .correct-answer-view {
+            background: #f4ebd9;
+            padding: 12px;
+            border: 1px solid #444;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>THE DAILY INKADE</h1>
+    <div class="masthead">
+        <span>EDITION #001</span>
+        <span>EDITOR: <input type="text" id="playerName" value="PLAYER ONE" style="font-family:inherit; border:none; background:transparent; font-weight:bold; width:110px;"></span>
+        <span>INFINITE GENERAL KNOWLEDGE</span>
+    </div>
+
+    <!-- MAIN HUB DASHBOARD -->
+    <div id="hub-view">
+        <div class="hub-grid">
+            <div class="game-card" onclick="openGame(1)">
+                <span class="badge">PLAY NOW</span>
+                <h3>1. General Knowledge Crossword</h3>
+                <p>Infinite 5x5 crosswords testing geography, science & history.</p>
+            </div>
+
+            <div class="game-card locked"><h3>2. Mini Sudoku</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>3. Word Search</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>4. Cryptogram</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>5. Editorial Maze</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>6. Typesetter's Block</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>7. Ink Dots</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>8. Press Run</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>9. Headline Scramble</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>10. Comics Match</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>11. Nonogram Blot</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>12. Delivery Pitch</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>13. Spot Difference</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>14. Classifier</h3><p>Locked</p></div>
+            <div class="game-card locked"><h3>15. Final Edition</h3><p>Locked</p></div>
+        </div>
+    </div>
+
+    <!-- GAME STAGE CONTAINER -->
+    <div id="game-stage">
+        <button class="action-btn" onclick="closeGame()">← QUIT TO PRESS ROOM</button>
+        
+        <div class="score-board">
+            <span>ROUND: <span id="round-display">1</span></span>
+            <span>SCORE: <span id="current-score-display">0</span> PTS</span>
+            <span>HIGH SCORE: <span id="high-score-display">0</span> PTS</span>
+        </div>
+
+        <h2 id="game-title" style="font-family:'Times New Roman', serif; text-transform:uppercase; margin-top:0;"></h2>
+        
+        <!-- Active Game Content -->
+        <div id="game-content"></div>
+
+        <!-- Game Over Section -->
+        <div id="game-over-box">
+            <div id="news-report"></div>
+            <div id="answer-reveal" class="correct-answer-view"></div>
+            <button class="action-btn restart" onclick="restartCurrentGame()">TRY AGAIN</button>
+            <button class="action-btn" onclick="closeGame()">QUIT / CHOOSE ANOTHER GAME</button>
+        </div>
+    </div>
+
+    <!-- IN-GAME MODAL SYSTEM -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modal-heading">NOTIFICATION</h3>
+            <p class="modal-body" id="modal-message"></p>
+            <button class="action-btn submit" onclick="closeCustomModal()">CONTINUE</button>
+        </div>
+    </div>
+
+    <script>
+    let currentScore = 0;
+    let highScore = localStorage.getItem('inkade_crossword_highscore') ? parseInt(localStorage.getItem('inkade_crossword_highscore')) : 0;
+    let currentRound = 1;
+    let activeGameId = 0;
+    let currentPuzzleSolution = null;
+    let lastPuzzleIndex = -1;
+    let modalCallback = null;
+
+    // 100% SOLVABLE CROSSWORD DATA POOL (Native JavaScript)
+    const crosswordPool = [
+        {
+            grid: [
+                ['E', 'A', 'R', 'T', 'H'],
+                ['A', '#', 'A', '#', '#'],
+                ['S', 'A', 'D', 'L', 'Y'],
+                ['E', '#', 'A', '#', '#'],
+                ['L', '#', 'R', '#', '#']
+            ],
+            rawClues: {
+                across: {
+                    "0,0": "Our home planet (5)",
+                    "2,0": "In an unhappy or unfortunate manner (5)"
+                },
+                down: {
+                    "0,0": "Stand used by artists to hold a canvas (5)",
+                    "0,2": "Object-detection system using radio waves (5)"
+                }
+            },
+            answersAcross: ["EARTH", "SADLY"],
+            answersDown: ["EASEL", "RADAR"]
+        },
+        {
+            grid: [
+                ['J', 'A', 'P', 'A', 'N'],
+                ['A', '#', 'A', '#', '#'],
+                ['V', 'I', 'R', 'U', 'S'],
+                ['A', '#', 'I', '#', '#'],
+                ['#', '#', 'S', '#', '#']
+            ],
+            rawClues: {
+                across: {
+                    "0,0": "Island country whose capital is Tokyo (5)",
+                    "2,0": "Microscopic infectious agent (5)"
+                },
+                down: {
+                    "0,0": "Indonesian island home to Jakarta (4)",
+                    "0,2": "French capital city of fashion and art (5)"
+                }
+            },
+            answersAcross: ["JAPAN", "VIRUS"],
+            answersDown: ["JAVA", "PARIS"]
+        },
+        {
+            grid: [
+                ['M', 'U', 'S', 'I', 'C'],
+                ['A', '#', 'O', '#', '#'],
+                ['I', 'N', 'L', 'A', 'Y'],
+                ['N', '#', 'A', '#', '#'],
+                ['S', '#', 'R', '#', '#']
+            ],
+            rawClues: {
+                across: {
+                    "0,0": "Vocal or instrumental sounds combined in harmony (5)",
+                    "2,0": "Decorative pattern set into a surface (5)"
+                },
+                down: {
+                    "0,0": "Primary water or electricity supply network (5)",
+                    "0,2": "Relating to or determined by light from the sun (5)"
+                }
+            },
+            answersAcross: ["MUSIC", "INLAY"],
+            answersDown: ["MAINS", "SOLAR"]
+        }
+    ];
+
+    function showCustomModal(title, text, onContinue) {
+        document.getElementById('modal-heading').innerText = title;
+        document.getElementById('modal-message').innerText = text;
+        modalCallback = onContinue;
+        document.getElementById('custom-modal').style.display = 'flex';
+    }
+
+    function closeCustomModal() {
+        document.getElementById('custom-modal').style.display = 'none';
+        if (modalCallback) {
+            const cb = modalCallback;
+            modalCallback = null;
+            cb();
+        }
+    }
+
+    function updateScoreDisplay() {
+        document.getElementById('current-score-display').innerText = currentScore;
+        document.getElementById('high-score-display').innerText = highScore;
+        document.getElementById('round-display').innerText = currentRound;
+    }
+
+    function openGame(gameId) {
+        if (gameId !== 1) return;
+        
+        activeGameId = gameId;
+        currentScore = 0;
+        currentRound = 1;
+        lastPuzzleIndex = -1;
+        
+        document.getElementById('hub-view').style.display = 'none';
+        document.getElementById('game-stage').style.display = 'block';
+        document.getElementById('game-over-box').style.display = 'none';
+        
+        updateScoreDisplay();
+        generateNextCrosswordRound();
+    }
+
+    function closeGame() {
+        document.getElementById('hub-view').style.display = 'block';
+        document.getElementById('game-stage').style.display = 'none';
+    }
+
+    function restartCurrentGame() {
+        openGame(activeGameId);
+    }
+
+    function generateNextCrosswordRound() {
+        document.getElementById('game-title').innerText = "Game 1: General Knowledge Crossword";
+        document.getElementById('game-over-box').style.display = 'none';
+        
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * crosswordPool.length);
+        } while (randomIndex === lastPuzzleIndex && crosswordPool.length > 1);
+
+        lastPuzzleIndex = randomIndex;
+        currentPuzzleSolution = crosswordPool[randomIndex];
+
+        let html = `
+            <p><strong>Round ${currentRound}:</strong> Complete the general knowledge crossword grid below!</p>
+            <div class="crossword-board">
+        `;
+
+        let numberMap = Array(5).fill(null).map(() => Array(5).fill(null));
+        let acrossCluesFormatted = [];
+        let downCluesFormatted = [];
+        let clueNum = 1;
+
+        for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 5; c++) {
+                if (currentPuzzleSolution.grid[r][c] !== '#') {
+                    let isAcrossStart = (c === 0 || currentPuzzleSolution.grid[r][c-1] === '#') && (c + 1 < 5 && currentPuzzleSolution.grid[r][c+1] !== '#');
+                    let isDownStart = (r === 0 || currentPuzzleSolution.grid[r-1][c] === '#') && (r + 1 < 5 && currentPuzzleSolution.grid[r+1][c] !== '#');
+                    
+                    if (isAcrossStart || isDownStart) {
+                        numberMap[r][c] = clueNum;
+                        
+                        let key = `${r},${c}`;
+                        if (isAcrossStart && currentPuzzleSolution.rawClues.across[key]) {
+                            acrossCluesFormatted.push(`<strong>${clueNum}.</strong> ${currentPuzzleSolution.rawClues.across[key]}`);
+                        }
+                        if (isDownStart && currentPuzzleSolution.rawClues.down[key]) {
+                            downCluesFormatted.push(`<strong>${clueNum}.</strong> ${currentPuzzleSolution.rawClues.down[key]}`);
+                        }
+
+                        clueNum++;
+                    }
+                }
+            }
+        }
+
+        for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 5; c++) {
+                if (currentPuzzleSolution.grid[r][c] === '#') {
+                    html += `<div class="cw-cell black"></div>`;
+                } else {
+                    let numLabel = numberMap[r][c] ? `<span class="num">${numberMap[r][c]}</span>` : '';
+                    html += `
+                        <div class="cw-cell">
+                            ${numLabel}
+                            <input type="text" maxlength="1" id="cell-${r}-${c}">
+                        </div>`;
+                }
+            }
+        }
+
+        html += `</div>
+            <div class="clues-box">
+                <strong>ACROSS CLUES:</strong><br>${acrossCluesFormatted.join('<br>')}<br><br>
+                <strong>DOWN CLUES:</strong><br>${downCluesFormatted.join('<br>')}
+            </div>
+            <button class="action-btn submit" onclick="submitCrosswordRound()">SUBMIT PUZZLE</button>
+        `;
+
+        document.getElementById('game-content').innerHTML = html;
+    }
+
+    function submitCrosswordRound() {
+        let isCorrect = true;
+
+        for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 5; c++) {
+                if (currentPuzzleSolution.grid[r][c] !== '#') {
+                    const inputElem = document.getElementById(`cell-${r}-${c}`);
+                    const val = inputElem ? inputElem.value.toUpperCase().trim() : '';
+                    if (val !== currentPuzzleSolution.grid[r][c]) {
+                        isCorrect = false;
+                    }
+                }
+            }
+        }
+
+        if (isCorrect) {
+            currentScore += 300;
+            currentRound++;
+
+            if (currentScore > highScore) {
+                highScore = currentScore;
+                localStorage.setItem('inkade_crossword_highscore', highScore);
+            }
+
+            updateScoreDisplay();
+            
+            showCustomModal("EXCELLENT!", "Correct answer! Advancing to the next edition with a new layout.", function() {
+                generateNextCrosswordRound();
+            });
+        } else {
+            handleGameOver();
+        }
+    }
+
+    function handleGameOver() {
+        document.getElementById('game-content').innerHTML = '';
+        
+        let answerHTML = "<strong>SOLUTION KEY:</strong><br><br>";
+        answerHTML += "<strong>ACROSS ANSWERS:</strong> " + currentPuzzleSolution.answersAcross.join(', ') + "<br>";
+        answerHTML += "<strong>DOWN ANSWERS:</strong> " + currentPuzzleSolution.answersDown.join(', ') + "<br><br>";
+        
+        answerHTML += "<strong>COMPLETED GRID:</strong><br>";
+        for (let r = 0; r < 5; r++) {
+            let rowStr = "";
+            for (let c = 0; c < 5; c++) {
+                rowStr += (currentPuzzleSolution.grid[r][c] === '#' ? "█ " : currentPuzzleSolution.grid[r][c] + " ");
+            }
+            answerHTML += rowStr + "<br>";
+        }
+
+        document.getElementById('answer-reveal').innerHTML = answerHTML;
+
+        const player = document.getElementById('playerName').value || "PLAYER ONE";
+        let report = `EXTRA! EXTRA! ${player} FINISHES RUN!\nFINAL SCORE: ${currentScore} PTS | ROUNDS COMPLETED: ${currentRound - 1}`;
+
+        document.getElementById('news-report').innerText = report;
+        document.getElementById('game-over-box').style.display = 'block';
+    }
+    </script>
+</body>
+</html>

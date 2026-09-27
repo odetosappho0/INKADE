@@ -37,7 +37,6 @@
             justify-content: space-between;
         }
 
-        /* Leaderboard Box */
         .leaderboard-section {
             background: #eae2d0;
             border: 2px solid #222;
@@ -68,7 +67,6 @@
             border-bottom: 1px dotted #888;
         }
 
-        /* Hub Grid Layout */
         .hub-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -124,7 +122,6 @@
             pointer-events: none;
         }
 
-        /* Active Stage View */
         #game-stage {
             display: none;
             background: #fff8eb;
@@ -132,6 +129,21 @@
             padding: 20px;
             margin-top: 20px;
             position: relative;
+        }
+
+        .instructions-box {
+            background: #eae2d0;
+            border-left: 4px solid #222;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .instructions-box strong {
+            text-transform: uppercase;
+            font-family: 'Times New Roman', Times, serif;
+            letter-spacing: 1px;
         }
 
         .score-board {
@@ -169,7 +181,7 @@
             background: #8b0000;
         }
 
-        /* Crossword Specific Grid UI */
+        /* Generic & Custom Game Grids */
         .crossword-board {
             display: grid;
             grid-template-columns: repeat(5, 45px);
@@ -180,6 +192,69 @@
             width: max-content;
             margin: 15px 0;
         }
+
+        .sudoku-board {
+            display: grid;
+            grid-template-columns: repeat(4, 50px);
+            grid-template-rows: repeat(4, 50px);
+            gap: 2px;
+            background: #222;
+            padding: 2px;
+            width: max-content;
+            margin: 15px 0;
+        }
+
+        .wordsearch-board {
+            display: grid;
+            grid-template-columns: repeat(6, 40px);
+            gap: 4px;
+            width: max-content;
+            margin: 15px 0;
+        }
+
+        .ws-cell {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border: 1px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .ws-cell.selected {
+            background: #222;
+            color: #fff;
+        }
+
+        .maze-board {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            gap: 3px;
+            width: max-content;
+            margin: 15px 0;
+            background: #222;
+            padding: 3px;
+        }
+
+        .maze-cell {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .maze-cell.wall { background: #222; color: #222; cursor: default; }
+        .maze-cell.player { background: #006600; color: #fff; }
+        .maze-cell.goal { background: #8b0000; color: #fff; }
 
         .cw-cell {
             background: #fff;
@@ -192,9 +267,7 @@
             position: relative;
         }
 
-        .cw-cell.black {
-            background: #222;
-        }
+        .cw-cell.black { background: #222; }
 
         .cw-cell input {
             width: 100%;
@@ -207,26 +280,24 @@
             background: transparent;
         }
 
-        .cw-cell .num {
-            position: absolute;
-            top: 2px;
-            left: 3px;
-            font-size: 0.65rem;
-            color: #333;
-            pointer-events: none;
-            font-weight: bold;
-        }
-
-        .clues-box {
-            font-size: 0.85rem;
-            margin-top: 10px;
-            line-height: 1.6;
-            background: #eae2d0;
+        .genz-news-banner {
+            margin-top: 25px;
+            background: #111;
+            color: #f4ebd9;
             padding: 12px;
-            border: 1px solid #333;
+            border-top: 3px double #f4ebd9;
+            font-size: 0.85rem;
         }
 
-        /* Newspaper Modal Overlay */
+        .genz-news-header {
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+            color: #e2b04c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -265,7 +336,6 @@
             line-height: 1.4;
         }
 
-        /* Game Over Section */
         #game-over-box {
             display: none;
             margin-top: 20px;
@@ -281,15 +351,6 @@
             margin-bottom: 15px;
             font-size: 1.1rem;
         }
-
-        .correct-answer-view {
-            background: #f4ebd9;
-            padding: 12px;
-            border: 1px solid #444;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
     </style>
 </head>
 <body>
@@ -298,7 +359,7 @@
     <div class="masthead">
         <span>EDITION #001</span>
         <span>EDITOR: <input type="text" id="playerName" value="PLAYER ONE" onchange="updateEditorName(this.value)" style="font-family:inherit; border:none; background:transparent; font-weight:bold; width:140px;"></span>
-        <span>INFINITE GENERAL KNOWLEDGE</span>
+        <span>5 UNLOCKED ARCADE GAMES</span>
     </div>
 
     <!-- MAIN HUB DASHBOARD -->
@@ -319,10 +380,30 @@
                 <p>Infinite 5x5 crosswords testing geography, science & history.</p>
             </div>
 
-            <div class="game-card locked"><h3>2. Mini Sudoku</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>3. Word Search</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>4. Cryptogram</h3><p>Locked</p></div>
-            <div class="game-card locked"><h3>5. Editorial Maze</h3><p>Locked</p></div>
+            <div class="game-card" onclick="openGame(2)">
+                <span class="badge">PLAY NOW</span>
+                <h3>2. Mini Sudoku</h3>
+                <p>Fill numbers 1 to 4 in a 4x4 newspaper grid.</p>
+            </div>
+
+            <div class="game-card" onclick="openGame(3)">
+                <span class="badge">PLAY NOW</span>
+                <h3>3. Word Search</h3>
+                <p>Find hidden editorial terms in the newsprint grid.</p>
+            </div>
+
+            <div class="game-card" onclick="openGame(4)">
+                <span class="badge">PLAY NOW</span>
+                <h3>4. Cryptogram</h3>
+                <p>Decipher famous journalism & historical quotes.</p>
+            </div>
+
+            <div class="game-card" onclick="openGame(5)">
+                <span class="badge">PLAY NOW</span>
+                <h3>5. Editorial Maze</h3>
+                <p>Navigate the chief editor through pressroom obstacles.</p>
+            </div>
+
             <div class="game-card locked"><h3>6. Typesetter's Block</h3><p>Locked</p></div>
             <div class="game-card locked"><h3>7. Ink Dots</h3><p>Locked</p></div>
             <div class="game-card locked"><h3>8. Press Run</h3><p>Locked</p></div>
@@ -348,15 +429,23 @@
 
         <h2 id="game-title" style="font-family:'Times New Roman', serif; text-transform:uppercase; margin-top:0;"></h2>
         
+        <!-- Instructions Banner -->
+        <div class="instructions-box" id="game-instructions"></div>
+
         <!-- Active Game Content -->
         <div id="game-content"></div>
 
         <!-- Game Over Section -->
         <div id="game-over-box">
             <div id="news-report"></div>
-            <div id="answer-reveal" class="correct-answer-view"></div>
             <button class="action-btn restart" onclick="restartCurrentGame()">TRY AGAIN</button>
             <button class="action-btn" onclick="closeGame()">QUIT / CHOOSE ANOTHER GAME</button>
+        </div>
+
+        <!-- Dynamic GenZ News Ticker -->
+        <div class="genz-news-banner">
+            <div class="genz-news-header"> Hot Off the Press </div>
+            <div id="genz-news-text">Loading culture news...</div>
         </div>
     </div>
 
@@ -369,7 +458,7 @@
         </div>
     </div>
 
-    <!-- STARTUP EDITOR NAME POPUP (NO EMAIL NEEDED) -->
+    <!-- STARTUP EDITOR NAME POPUP -->
     <div id="welcome-modal" class="modal-overlay" style="display: flex;">
         <div class="modal-box">
             <h3 class="modal-title">DAILY INKADE REGISTRATION</h3>
@@ -385,7 +474,7 @@
     </div>
 
     <script>
-    // JSONBIN PUBLIC CONFIGURATION (REPLACE WITH YOUR BIN ID & MASTER KEY FOR YOUR OWN DATABASE)
+    // PASTE YOUR JSONBIN KEYS HERE:
     const JSONBIN_BIN_ID = "6ab8d0e0ffd5d1605333d21a";
     const JSONBIN_MASTER_KEY = "$2a$10$4bDwexij7nibpdcjTFnHgun6HiqhMuDrjcZvH9zrQdtViAFDxepTW";
 
@@ -394,10 +483,19 @@
     let currentRound = 1;
     let activeGameId = 0;
     let currentPuzzleSolution = null;
-    let lastPuzzleIndex = -1;
     let modalCallback = null;
 
-    // 100% SOLVABLE CROSSWORD DATA POOL
+    // REAL INTERESTING GEN-Z CULTURE NEWS TICKER
+    const genzNewsList = [
+        "A Raccoon Broke Into a Liquor Store and Passed Out (December 2025): A wild raccoon broke into a liquor establishment in Virginia after sneaking through a roof vent. Once inside, the animal knocked over several bottles of high-proof alcohol, drinking the contents directly off the floor. Store employees opened up the following morning to find the aisles ransacked and the intruder completely unconscious between the bathroom toilet and trash can. Local animal control held the trashed panda in a holding cell until it sobered up and could be released back into the wild. (patch.com)",
+        "A Citizen Scientist Let Venomous Snakes Bite Him 200 Times (December 2025): To help develop a universal antivenom for snakebites, citizen scientist Tim Friede subjected himself to hundreds of controlled snakebites. Over two decades, he injected escalating doses of venom from black mambas, cobras, and taipans directly into his system. By late 2025, he had survived over 200 deliberate bites, developing such high antibody levels that his blood could protect others. His dangerous self-experimentation is now being used by medical researchers to engineer next-generation antivenoms. (patch.com)",
+        "A Pet Dog Ate a Loaded Gun and Shot Its Owner (March 2025): In Salt Lake City, a man was resting in bed when his one-year-old pit bull named Oreo jumped up onto the mattress. Unfortunately, a loaded handgun was lying unattended on the bedding. The dog inadvertently stepped on the weapon, snagging its paw directly inside the trigger guard. As the dog tried to free its foot, it pulled the trigger, discharging a bullet that grazed its owner's thigh. Both the owner and the dog escaped the bizarre incident without serious injury. (listverse.com)",
+        "A Thief Accidentally Handed His ID to the Bank Teller (October 2025): A man in Texas attempted to rob a local bank branch by handing the teller a handwritten note demanding cash. However, because he had grabbed the first scrap of paper he found in his kitchen, the back of the note turned out to be his official state driver’s license. Realizing his error, he panicked, grabbed the money, and fled on foot. Police officers used the address printed on the back of his robbery note to arrive at his house before he even made it home. (complex.com)",
+        "The BBC Announced There Is No News (April 18, 1930): On Good Friday in 1930, the British Broadcasting Corporation went live for its scheduled 8:45 PM radio news bulletin. However, the newsreader simply announced, Good evening. Today is Good Friday. There is no news. Rather than filling the airtime with commentary or filler pieces, the studio played piano music for the remainder of the 15-minute slot. It remains the only time in modern history a major global news network officially declared a day entirely event-free. (historyfacts.com)"
+    ];
+    
+
+    // GAME 1: CROSSWORDS
     const crosswordPool = [
         {
             grid: [
@@ -407,62 +505,64 @@
                 ['E', '#', 'A', '#', '#'],
                 ['L', '#', 'R', '#', '#']
             ],
-            rawClues: {
-                across: {
-                    "0,0": "Our home planet (5)",
-                    "2,0": "In an unhappy or unfortunate manner (5)"
-                },
-                down: {
-                    "0,0": "Stand used by artists to hold a canvas (5)",
-                    "0,2": "Object-detection system using radio waves (5)"
-                }
-            },
-            answersAcross: ["EARTH", "SADLY"],
-            answersDown: ["EASEL", "RADAR"]
-        },
-        {
-            grid: [
-                ['J', 'A', 'P', 'A', 'N'],
-                ['A', '#', 'A', '#', '#'],
-                ['V', 'I', 'R', 'U', 'S'],
-                ['A', '#', 'I', '#', '#'],
-                ['#', '#', 'S', '#', '#']
-            ],
-            rawClues: {
-                across: {
-                    "0,0": "Island country whose capital is Tokyo (5)",
-                    "2,0": "Microscopic infectious agent (5)"
-                },
-                down: {
-                    "0,0": "Indonesian island home to Jakarta (4)",
-                    "0,2": "French capital city of fashion and art (5)"
-                }
-            },
-            answersAcross: ["JAPAN", "VIRUS"],
-            answersDown: ["JAVA", "PARIS"]
-        },
-        {
-            grid: [
-                ['M', 'U', 'S', 'I', 'C'],
-                ['A', '#', 'O', '#', '#'],
-                ['I', 'N', 'L', 'A', 'Y'],
-                ['N', '#', 'A', '#', '#'],
-                ['S', '#', 'R', '#', '#']
-            ],
-            rawClues: {
-                across: {
-                    "0,0": "Vocal or instrumental sounds combined in harmony (5)",
-                    "2,0": "Decorative pattern set into a surface (5)"
-                },
-                down: {
-                    "0,0": "Primary water or electricity supply network (5)",
-                    "0,2": "Relating to or determined by light from the sun (5)"
-                }
-            },
-            answersAcross: ["MUSIC", "INLAY"],
-            answersDown: ["MAINS", "SOLAR"]
+            instructions: "<strong>How to play:</strong> Click empty white cells and type the letter to complete the 5x5 grid puzzle!"
         }
     ];
+
+    // GAME 2: MINI SUDOKU DATA
+    const sudokuPool = [
+        {
+            initial: [
+                ['1', '', '3', ''],
+                ['', '3', '', '2'],
+                ['3', '', '2', ''],
+                ['', '2', '', '4']
+            ],
+            solution: [
+                ['1', '4', '3', '2'],
+                ['4', '3', '1', '2'],
+                ['3', '1', '2', '4'],
+                ['2', '2', '4', '4']
+            ],
+            instructions: "<strong>How to play:</strong> Enter numbers 1 through 4 into empty boxes. Each row and column must contain digits 1-4 with no repeats!"
+        }
+    ];
+
+    // GAME 3: WORD SEARCH DATA
+    const wordsearchPool = [
+        {
+            grid: [
+                ['P', 'R', 'E', 'S', 'S', 'O'],
+                ['A', 'I', 'N', 'K', 'A', 'D'],
+                ['P', 'N', 'E', 'W', 'S', 'I'],
+                ['E', 'D', 'I', 'T', 'O', 'R'],
+                ['R', 'O', 'L', 'L', 'S', 'P'],
+                ['S', 'T', 'O', 'R', 'Y', 'S']
+            ],
+            words: ["PRESS", "INK", "NEWS", "EDITOR", "STORY"],
+            instructions: "<strong>How to play:</strong> Click on letter boxes in the grid to highlight target editorial words listed below!"
+        }
+    ];
+
+    // GAME 4: CRYPTOGRAM DATA
+    const cryptogramPool = [
+        { 
+            quote: "TRUTH IS POWER", 
+            hint: "Core pillar of journalism",
+            instructions: "<strong>How to play:</strong> Read the hint and decode the encrypted journalistic phrase into the input field."
+        }
+    ];
+
+    // GAME 5: MAZE DATA
+    let playerPos = { r: 0, c: 0 };
+    const mazeMap = [
+        [0, 0, 1, 0, 0],
+        [1, 0, 1, 0, 1],
+        [0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 0],
+        [0, 0, 0, 1, 2]
+    ];
+    const mazeInstructions = "<strong>How to play:</strong> Use direction buttons to navigate the Green Editor 'G' around black wall obstacles to the Finish Flag (🏁)!";
 
     window.addEventListener('DOMContentLoaded', () => {
         const savedName = localStorage.getItem('inkade_player_name');
@@ -481,88 +581,74 @@
 
     function savePlayerName() {
         const nameInput = document.getElementById('popup-player-name').value.trim();
-
-        if (!nameInput) {
-            alert("Please enter an Editor Name to continue!");
-            return;
-        }
-
+        if (!nameInput) { alert("Please enter an Editor Name to continue!"); return; }
         localStorage.setItem('inkade_player_name', nameInput);
         document.getElementById('playerName').value = nameInput;
         document.getElementById('welcome-modal').style.display = 'none';
     }
 
     async function fetchPublicLeaderboard() {
-    const listElem = document.getElementById('leaderboard-list');
-
-    if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE") {
-        const name = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
-        const score = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
-        listElem.innerHTML = `<li><span>1. <strong>${name}</strong></span><span><strong>${score} PTS</strong></span></li>`;
-        return;
-    }
-
-    try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-            headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-        });
-        const data = await res.json();
-        
-        // Extract array from the record object
-        const scores = (data.record && data.record.record) ? data.record.record : (Array.isArray(data.record) ? data.record : []);
-
-        scores.sort((a, b) => b.score - a.score);
-
-        if (scores.length === 0) {
-            listElem.innerHTML = '<li><span>No public scores yet! Be the first!</span><span>0 PTS</span></li>';
+        const listElem = document.getElementById('leaderboard-list');
+        if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE") {
+            const name = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
+            const score = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
+            listElem.innerHTML = `<li><span>1. <strong>${name}</strong></span><span><strong>${score} PTS</strong></span></li>`;
             return;
         }
 
-        listElem.innerHTML = scores.slice(0, 5).map((entry, idx) => `
-            <li>
-                <span>${idx === 0 ? '🥇' : idx + 1 + '.'} <strong>${entry.name}</strong></span>
-                <span><strong>${entry.score} PTS</strong></span>
-            </li>
-        `).join('');
-    } catch (err) {
-        listElem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
-    }
-}
+        try {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+            });
+            const data = await res.json();
+            const scores = (data.record && data.record.record) ? data.record.record : (Array.isArray(data.record) ? data.record : []);
+            scores.sort((a, b) => b.score - a.score);
 
-async function submitPublicScore(name, score) {
-    if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE" || score <= 0) return;
-
-    try {
-        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-            headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
-        });
-        const data = await res.json();
-        
-        let scores = (data.record && data.record.record) ? data.record.record : (Array.isArray(data.record) ? data.record : []);
-
-        const existingIdx = scores.findIndex(s => s.name === name);
-        if (existingIdx !== -1) {
-            if (score > scores[existingIdx].score) {
-                scores[existingIdx].score = score;
+            if (scores.length === 0) {
+                listElem.innerHTML = '<li><span>No public scores yet! Be the first!</span><span>0 PTS</span></li>';
+                return;
             }
-        } else {
-            scores.push({ name, score });
+
+            listElem.innerHTML = scores.slice(0, 5).map((entry, idx) => `
+                <li>
+                    <span>${idx === 0 ? '🥇' : idx + 1 + '.'} <strong>${entry.name}</strong></span>
+                    <span><strong>${entry.score} PTS</strong></span>
+                </li>
+            `).join('');
+        } catch (err) {
+            listElem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
         }
-
-        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Master-Key': JSONBIN_MASTER_KEY
-            },
-            body: JSON.stringify({ record: scores })
-        });
-
-        fetchPublicLeaderboard();
-    } catch (err) {
-        console.error("Score submission error:", err);
     }
-}
+
+    async function submitPublicScore(name, score) {
+        if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE" || score <= 0) return;
+
+        try {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+            });
+            const data = await res.json();
+            let scores = (data.record && data.record.record) ? data.record.record : (Array.isArray(data.record) ? data.record : []);
+
+            const existingIdx = scores.findIndex(s => s.name === name);
+            if (existingIdx !== -1) {
+                if (score > scores[existingIdx].score) scores[existingIdx].score = score;
+            } else {
+                scores.push({ name, score });
+            }
+
+            await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': JSONBIN_MASTER_KEY
+                },
+                body: JSON.stringify({ record: scores })
+            });
+
+            fetchPublicLeaderboard();
+        } catch (err) { console.error(err); }
+    }
 
     function showCustomModal(title, text, onContinue) {
         document.getElementById('modal-heading').innerText = title;
@@ -573,11 +659,7 @@ async function submitPublicScore(name, score) {
 
     function closeCustomModal() {
         document.getElementById('custom-modal').style.display = 'none';
-        if (modalCallback) {
-            const cb = modalCallback;
-            modalCallback = null;
-            cb();
-        }
+        if (modalCallback) { const cb = modalCallback; modalCallback = null; cb(); }
     }
 
     function updateScoreDisplay() {
@@ -587,19 +669,25 @@ async function submitPublicScore(name, score) {
     }
 
     function openGame(gameId) {
-        if (gameId !== 1) return;
-        
         activeGameId = gameId;
         currentScore = 0;
         currentRound = 1;
-        lastPuzzleIndex = -1;
         
         document.getElementById('hub-view').style.display = 'none';
         document.getElementById('game-stage').style.display = 'block';
         document.getElementById('game-over-box').style.display = 'none';
         
+        // Randomize GenZ News item at bottom of game
+        const randomNews = genzNewsList[Math.floor(Math.random() * genzNewsList.length)];
+        document.getElementById('genz-news-text').innerText = randomNews;
+
         updateScoreDisplay();
-        generateNextCrosswordRound();
+
+        if (gameId === 1) generateNextCrosswordRound();
+        else if (gameId === 2) generateSudokuRound();
+        else if (gameId === 3) generateWordSearchRound();
+        else if (gameId === 4) generateCryptogramRound();
+        else if (gameId === 5) generateMazeRound();
     }
 
     function closeGame() {
@@ -608,138 +696,227 @@ async function submitPublicScore(name, score) {
         fetchPublicLeaderboard();
     }
 
-    function restartCurrentGame() {
-        openGame(activeGameId);
+    function restartCurrentGame() { openGame(activeGameId); }
+
+    // --- GAME 1: CROSSWORD ---
+  function generateNextCrosswordRound() {
+    document.getElementById('game-title').innerText = "Game 1: General Knowledge Crossword";
+    document.getElementById('game-instructions').innerHTML = crosswordPool[0].instructions;
+    document.getElementById('game-over-box').style.display = 'none';
+    currentPuzzleSolution = crosswordPool[0];
+
+    let html = `<div class="crossword-board">`;
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            if (currentPuzzleSolution.grid[r][c] === '#') {
+                html += `<div class="cw-cell black"></div>`;
+            } else {
+                html += `<div class="cw-cell">
+                            <input type="text" maxlength="1" id="cell-${r}-${c}" 
+                                   oninput="handleCrosswordInput(event, ${r}, ${c})" 
+                                   onkeydown="handleCrosswordKeydown(event, ${r}, ${c})">
+                         </div>`;
+            }
+        }
     }
-
-    function generateNextCrosswordRound() {
-        document.getElementById('game-title').innerText = "Game 1: General Knowledge Crossword";
-        document.getElementById('game-over-box').style.display = 'none';
-        
-        let randomIndex;
-        do {
-            randomIndex = Math.floor(Math.random() * crosswordPool.length);
-        } while (randomIndex === lastPuzzleIndex && crosswordPool.length > 1);
-
-        lastPuzzleIndex = randomIndex;
-        currentPuzzleSolution = crosswordPool[randomIndex];
-
-        let html = `
-            <p><strong>Round ${currentRound}:</strong> Complete the general knowledge crossword grid below!</p>
-            <div class="crossword-board">
-        `;
-
-        let numberMap = Array(5).fill(null).map(() => Array(5).fill(null));
-        let acrossCluesFormatted = [];
-        let downCluesFormatted = [];
-        let clueNum = 1;
-
+    html += `</div><button class="action-btn submit" onclick="submitCrosswordRound()">SUBMIT PUZZLE</button>`;
+    document.getElementById('game-content').innerHTML = html;
+}
+    function submitCrosswordRound() {
+        let isCorrect = true;
         for (let r = 0; r < 5; r++) {
             for (let c = 0; c < 5; c++) {
                 if (currentPuzzleSolution.grid[r][c] !== '#') {
-                    let isAcrossStart = (c === 0 || currentPuzzleSolution.grid[r][c-1] === '#') && (c + 1 < 5 && currentPuzzleSolution.grid[r][c+1] !== '#');
-                    let isDownStart = (r === 0 || currentPuzzleSolution.grid[r-1][c] === '#') && (r + 1 < 5 && currentPuzzleSolution.grid[r+1][c] !== '#');
-                    
-                    if (isAcrossStart || isDownStart) {
-                        numberMap[r][c] = clueNum;
-                        
-                        let key = `${r},${c}`;
-                        if (isAcrossStart && currentPuzzleSolution.rawClues.across[key]) {
-                            acrossCluesFormatted.push(`<strong>${clueNum}.</strong> ${currentPuzzleSolution.rawClues.across[key]}`);
-                        }
-                        if (isDownStart && currentPuzzleSolution.rawClues.down[key]) {
-                            downCluesFormatted.push(`<strong>${clueNum}.</strong> ${currentPuzzleSolution.rawClues.down[key]}`);
-                        }
-
-                        clueNum++;
-                    }
+                    const val = document.getElementById(`cell-${r}-${c}`).value.toUpperCase().trim();
+                    if (val !== currentPuzzleSolution.grid[r][c]) isCorrect = false;
                 }
             }
         }
+        if (isCorrect) handleGameSuccess(); else handleGameOver("Crossword submitted with errors!");
+    }
 
-        for (let r = 0; r < 5; r++) {
-            for (let c = 0; c < 5; c++) {
-                if (currentPuzzleSolution.grid[r][c] === '#') {
-                    html += `<div class="cw-cell black"></div>`;
-                } else {
-                    let numLabel = numberMap[r][c] ? `<span class="num">${numberMap[r][c]}</span>` : '';
-                    html += `
-                        <div class="cw-cell">
-                            ${numLabel}
-                            <input type="text" maxlength="1" id="cell-${r}-${c}">
-                        </div>`;
-                }
+    // --- GAME 2: MINI SUDOKU ---
+    function generateSudokuRound() {
+        document.getElementById('game-title').innerText = "Game 2: Mini Sudoku (4x4)";
+        document.getElementById('game-instructions').innerHTML = sudokuPool[0].instructions;
+        let puzzle = sudokuPool[0];
+        currentPuzzleSolution = puzzle.solution;
+
+        let html = `<div class="sudoku-board">`;
+        for (let r = 0; r < 4; r++) {
+            for (let c = 0; c < 4; c++) {
+                let init = puzzle.initial[r][c];
+                if (init !== '') html += `<div class="cw-cell" style="background:#eae2d0;">${init}</div>`;
+                else html += `<div class="cw-cell"><input type="text" maxlength="1" id="sdk-${r}-${c}"></div>`;
             }
         }
-
-        html += `</div>
-            <div class="clues-box">
-                <strong>ACROSS CLUES:</strong><br>${acrossCluesFormatted.join('<br>')}<br><br>
-                <strong>DOWN CLUES:</strong><br>${downCluesFormatted.join('<br>')}
-            </div>
-            <button class="action-btn submit" onclick="submitCrosswordRound()">SUBMIT PUZZLE</button>
-        `;
-
+        html += `</div><button class="action-btn submit" onclick="submitSudoku()">VERIFY SUDOKU</button>`;
         document.getElementById('game-content').innerHTML = html;
     }
 
-    function submitCrosswordRound() {
-        let isCorrect = true;
-
-        for (let r = 0; r < 5; r++) {
-            for (let c = 0; c < 5; c++) {
-                if (currentPuzzleSolution.grid[r][c] !== '#') {
-                    const inputElem = document.getElementById(`cell-${r}-${c}`);
-                    const val = inputElem ? inputElem.value.toUpperCase().trim() : '';
-                    if (val !== currentPuzzleSolution.grid[r][c]) {
-                        isCorrect = false;
-                    }
+    function handleCrosswordInput(e, r, c) {
+    const input = e.target;
+    if (input.value.length === 1) {
+        // Find the next available input cell in row-major order
+        for (let nextC = c + 1; nextC < 5; nextC++) {
+            const nextCell = document.getElementById(`cell-${r}-${nextC}`);
+            if (nextCell) {
+                nextCell.focus();
+                return;
+            }
+        }
+        // If at the end of a row, move to the first cell of the next row
+        for (let nextR = r + 1; nextR < 5; nextR++) {
+            for (let nextC = 0; nextC < 5; nextC++) {
+                const nextCell = document.getElementById(`cell-${nextR}-${nextC}`);
+                if (nextCell) {
+                    nextCell.focus();
+                    return;
                 }
             }
         }
+    }
+}
 
-        if (isCorrect) {
-            currentScore += 300;
-            currentRound++;
-
-            const playerName = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
-            if (currentScore > highScore) {
-                highScore = currentScore;
-                localStorage.setItem('inkade_crossword_highscore', highScore);
+function handleCrosswordKeydown(e, r, c) {
+    const input = e.target;
+    if (e.key === 'Backspace' && input.value === '') {
+        // Move focus backward to the previous cell when deleting
+        for (let prevC = c - 1; prevC >= 0; prevC--) {
+            const prevCell = document.getElementById(`cell-${r}-${prevC}`);
+            if (prevCell) {
+                prevCell.focus();
+                return;
             }
+        }
+        for (let prevR = r - 1; prevR >= 0; prevR--) {
+            for (let prevC = 4; prevC >= 0; prevC--) {
+                const prevCell = document.getElementById(`cell-${prevR}-${prevC}`);
+                if (prevCell) {
+                    prevCell.focus();
+                    return;
+                }
+            }
+        }
+    }
+}
 
-            submitPublicScore(playerName, currentScore);
-            updateScoreDisplay();
-            
-            showCustomModal("EXCELLENT!", "Correct answer! Advancing to the next edition with a new layout.", function() {
-                generateNextCrosswordRound();
-            });
-        } else {
-            handleGameOver();
+    function submitSudoku() {
+        let puzzle = sudokuPool[0];
+        let correct = true;
+        for (let r = 0; r < 4; r++) {
+            for (let c = 0; c < 4; c++) {
+                if (puzzle.initial[r][c] === '') {
+                    let val = document.getElementById(`sdk-${r}-${c}`).value.trim();
+                    if (val !== currentPuzzleSolution[r][c]) correct = false;
+                }
+            }
+        }
+        if (correct) handleGameSuccess(); else handleGameOver("Incorrect Sudoku solution!");
+    }
+
+    // --- GAME 3: WORD SEARCH ---
+    function generateWordSearchRound() {
+        document.getElementById('game-title').innerText = "Game 3: Word Search";
+        document.getElementById('game-instructions').innerHTML = wordsearchPool[0].instructions;
+        let data = wordsearchPool[0];
+
+        let html = `<p>Target words: <strong>${data.words.join(', ')}</strong></p><div class="wordsearch-board">`;
+        for (let r = 0; r < 6; r++) {
+            for (let c = 0; c < 6; c++) {
+                html += `<div class="ws-cell" id="ws-${r}-${c}" onclick="toggleWsCell(${r},${c})">${data.grid[r][c]}</div>`;
+            }
+        }
+        html += `</div><button class="action-btn submit" onclick="submitWordSearch()">SUBMIT FOUND WORDS</button>`;
+        document.getElementById('game-content').innerHTML = html;
+    }
+
+    function toggleWsCell(r, c) {
+        let elem = document.getElementById(`ws-${r}-${c}`);
+        elem.classList.toggle('selected');
+    }
+
+    function submitWordSearch() { handleGameSuccess(); }
+
+    // --- GAME 4: CRYPTOGRAM ---
+    function generateCryptogramRound() {
+        document.getElementById('game-title').innerText = "Game 4: Editorial Cryptogram";
+        document.getElementById('game-instructions').innerHTML = cryptogramPool[0].instructions;
+        let item = cryptogramPool[0];
+        currentPuzzleSolution = item.quote;
+
+        let html = `<p><strong>HINT:</strong> ${item.hint}</p>
+        <p>Type the decoded message below:</p>
+        <input type="text" id="crypto-input" style="width:100%; padding:10px; font-size:1.1rem; font-family:inherit; border:2px solid #222;" placeholder="TYPE DECODED QUOTE HERE...">
+        <br><button class="action-btn submit" onclick="submitCryptogram()">SOLVE CRYPTOGRAM</button>`;
+        document.getElementById('game-content').innerHTML = html;
+    }
+
+    function submitCryptogram() {
+        let ans = document.getElementById('crypto-input').value.toUpperCase().trim();
+        if (ans === currentPuzzleSolution) handleGameSuccess();
+        else handleGameOver("Incorrect decoded message!");
+    }
+
+    // --- GAME 5: EDITORIAL MAZE ---
+    function generateMazeRound() {
+        document.getElementById('game-title').innerText = "Game 5: Pressroom Maze";
+        document.getElementById('game-instructions').innerHTML = mazeInstructions;
+        playerPos = { r: 0, c: 0 };
+        renderMaze();
+    }
+
+    function renderMaze() {
+        let html = `<div class="maze-board">`;
+        for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 5; c++) {
+                let cellVal = mazeMap[r][c];
+                let isPlayer = (r === playerPos.r && c === playerPos.c);
+                if (isPlayer) html += `<div class="maze-cell player">G</div>`;
+                else if (cellVal === 1) html += `<div class="maze-cell wall">█</div>`;
+                else if (cellVal === 2) html += `<div class="maze-cell goal">🏁</div>`;
+                else html += `<div class="maze-cell">.</div>`;
+            }
+        }
+        html += `</div>
+        <div>
+            <button class="action-btn" onclick="moveMaze(-1, 0)">UP</button><br>
+            <button class="action-btn" onclick="moveMaze(0, -1)">LEFT</button>
+            <button class="action-btn" onclick="moveMaze(0, 1)">RIGHT</button><br>
+            <button class="action-btn" onclick="moveMaze(1, 0)">DOWN</button>
+        </div>`;
+        document.getElementById('game-content').innerHTML = html;
+    }
+
+    function moveMaze(dr, dc) {
+        let nr = playerPos.r + dr;
+        let nc = playerPos.c + dc;
+        if (nr >= 0 && nr < 5 && nc >= 0 && nc < 5 && mazeMap[nr][nc] !== 1) {
+            playerPos = { r: nr, c: nc };
+            renderMaze();
+            if (mazeMap[nr][nc] === 2) handleGameSuccess();
         }
     }
 
-    function handleGameOver() {
-        document.getElementById('game-content').innerHTML = '';
-        
-        let answerHTML = "<strong>SOLUTION KEY:</strong><br><br>";
-        answerHTML += "<strong>ACROSS ANSWERS:</strong> " + currentPuzzleSolution.answersAcross.join(', ') + "<br>";
-        answerHTML += "<strong>DOWN ANSWERS:</strong> " + currentPuzzleSolution.answersDown.join(', ') + "<br><br>";
-        
-        answerHTML += "<strong>COMPLETED GRID:</strong><br>";
-        for (let r = 0; r < 5; r++) {
-            let rowStr = "";
-            for (let c = 0; c < 5; c++) {
-                rowStr += (currentPuzzleSolution.grid[r][c] === '#' ? "█ " : currentPuzzleSolution.grid[r][c] + " ");
-            }
-            answerHTML += rowStr + "<br>";
+    function handleGameSuccess() {
+        currentScore += 300;
+        currentRound++;
+        const playerName = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
+        if (currentScore > highScore) {
+            highScore = currentScore;
+            localStorage.setItem('inkade_crossword_highscore', highScore);
         }
+        submitPublicScore(playerName, currentScore);
+        updateScoreDisplay();
+        showCustomModal("FANTASTIC JOB!", "Game round cleared successfully! Score posted to public leaderboard.", function() {
+            closeGame();
+        });
+    }
 
-        document.getElementById('answer-reveal').innerHTML = answerHTML;
-
+    function handleGameOver(msg) {
+        document.getElementById('game-content').innerHTML = '';
         const player = document.getElementById('playerName').value || "PLAYER ONE";
-        let report = `EXTRA! EXTRA! ${player} FINISHES RUN!\nFINAL SCORE: ${currentScore} PTS | ROUNDS COMPLETED: ${currentRound - 1}`;
-
+        let report = `EXTRA! EXTRA! ${player} ENDS GAME RUN!\nREASON: ${msg}\nFINAL SCORE: ${currentScore} PTS`;
         document.getElementById('news-report').innerText = report;
         document.getElementById('game-over-box').style.display = 'block';
     }

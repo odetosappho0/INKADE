@@ -37,6 +37,37 @@
             justify-content: space-between;
         }
 
+        /* Leaderboard Box */
+        .leaderboard-section {
+            background: #eae2d0;
+            border: 2px solid #222;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .leaderboard-title {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            border-bottom: 1px dashed #222;
+            padding-bottom: 4px;
+            margin-top: 0;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dotted #888;
+        }
+
         /* Hub Grid Layout */
         .hub-grid {
             display: grid;
@@ -91,37 +122,6 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             pointer-events: none;
-        }
-
-        /* Leaderboard Box */
-        .leaderboard-section {
-            background: #eae2d0;
-            border: 2px solid #222;
-            padding: 15px;
-            margin-bottom: 25px;
-        }
-
-        .leaderboard-title {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            border-bottom: 1px dashed #222;
-            padding-bottom: 4px;
-            margin-top: 0;
-        }
-
-        .leaderboard-list {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0 0 0;
-            font-size: 0.9rem;
-        }
-
-        .leaderboard-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            border-bottom: 1px dotted #888;
         }
 
         /* Active Stage View */
@@ -304,11 +304,11 @@
     <!-- MAIN HUB DASHBOARD -->
     <div id="hub-view">
 
-        <!-- LEADERBOARD COMPONENT -->
+        <!-- PUBLIC LEADERBOARD COMPONENT -->
         <div class="leaderboard-section">
-            <h3 class="leaderboard-title">📰 TOP EDITORIAL SCORES (LEADERBOARD)</h3>
+            <h3 class="leaderboard-title">📰 PUBLIC LEADERBOARD (TOP EDITORS)</h3>
             <ul class="leaderboard-list" id="leaderboard-list">
-                <li><span>1. No records set yet!</span><span>0 PTS</span></li>
+                <li><span>Loading public high scores...</span><span>--</span></li>
             </ul>
         </div>
 
@@ -369,27 +369,26 @@
         </div>
     </div>
 
-    <!-- STARTUP EDITOR NAME POPUP -->
+    <!-- STARTUP EDITOR NAME POPUP (NO EMAIL NEEDED) -->
     <div id="welcome-modal" class="modal-overlay" style="display: flex;">
         <div class="modal-box">
             <h3 class="modal-title">DAILY INKADE REGISTRATION</h3>
-            <p class="modal-body">Welcome, Chief Editor! Enter your details to record your official high scores.</p>
+            <p class="modal-body">Welcome, Chief Editor! Enter your display name to compete on the public leaderboard.</p>
             
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">EDITOR NAME (REQUIRED):</label>
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">EDITOR NAME:</label>
                 <input type="text" id="popup-player-name" placeholder="e.g. Jane Doe" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
             </div>
 
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">GMAIL / EMAIL (OPTIONAL - FOR TOP SCORES):</label>
-                <input type="email" id="popup-player-email" placeholder="e.g. editor@gmail.com" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
-            </div>
-
-            <button class="action-btn submit" onclick="savePlayerCredentials()">START READING & PLAYING</button>
+            <button class="action-btn submit" onclick="savePlayerName()">START READING & PLAYING</button>
         </div>
     </div>
 
     <script>
+    // JSONBIN PUBLIC CONFIGURATION (REPLACE WITH YOUR BIN ID & MASTER KEY FOR YOUR OWN DATABASE)
+    const JSONBIN_BIN_ID = "YOUR_BIN_ID_HERE";
+    const JSONBIN_MASTER_KEY = "YOUR_MASTER_KEY_HERE";
+
     let currentScore = 0;
     let highScore = localStorage.getItem('inkade_crossword_highscore') ? parseInt(localStorage.getItem('inkade_crossword_highscore')) : 0;
     let currentRound = 1;
@@ -473,17 +472,15 @@
         } else {
             document.getElementById('welcome-modal').style.display = 'flex';
         }
-        renderLeaderboard();
+        fetchPublicLeaderboard();
     });
 
     function updateEditorName(newName) {
         localStorage.setItem('inkade_player_name', newName);
-        renderLeaderboard();
     }
 
-    function savePlayerCredentials() {
+    function savePlayerName() {
         const nameInput = document.getElementById('popup-player-name').value.trim();
-        const emailInput = document.getElementById('popup-player-email').value.trim();
 
         if (!nameInput) {
             alert("Please enter an Editor Name to continue!");
@@ -491,34 +488,77 @@
         }
 
         localStorage.setItem('inkade_player_name', nameInput);
-        if (emailInput) {
-            localStorage.setItem('inkade_player_email', emailInput);
-        }
-
         document.getElementById('playerName').value = nameInput;
         document.getElementById('welcome-modal').style.display = 'none';
-        renderLeaderboard();
     }
 
-    function renderLeaderboard() {
+    async function fetchPublicLeaderboard() {
         const listElem = document.getElementById('leaderboard-list');
-        const playerName = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
-        const topScore = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
 
-        if (topScore > 0) {
-            listElem.innerHTML = `
+        if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE") {
+            // Fallback local view if JSONBin hasn't been linked yet
+            const name = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
+            const score = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
+            listElem.innerHTML = `<li><span>1. <strong>${name}</strong></span><span><strong>${score} PTS</strong></span></li>`;
+            return;
+        }
+
+        try {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+            });
+            const data = await res.json();
+            const scores = data.record || [];
+
+            scores.sort((a, b) => b.score - a.score);
+
+            if (scores.length === 0) {
+                listElem.innerHTML = '<li><span>No public scores yet! Be the first!</span><span>0 PTS</span></li>';
+                return;
+            }
+
+            listElem.innerHTML = scores.slice(0, 5).map((entry, idx) => `
                 <li>
-                    <span>🥇 <strong>${playerName}</strong> (General Knowledge Crossword)</span>
-                    <span><strong>${topScore} PTS</strong></span>
+                    <span>${idx === 0 ? '🥇' : idx + 1 + '.'} <strong>${entry.name}</strong></span>
+                    <span><strong>${entry.score} PTS</strong></span>
                 </li>
-            `;
-        } else {
-            listElem.innerHTML = `
-                <li>
-                    <span>1. <strong>${playerName}</strong> - Play a game to record your score!</span>
-                    <span>0 PTS</span>
-                </li>
-            `;
+            `).join('');
+        } catch (err) {
+            listElem.innerHTML = '<li><span>Unable to load live public scores</span><span>--</span></li>';
+        }
+    }
+
+    async function submitPublicScore(name, score) {
+        if (JSONBIN_BIN_ID === "YOUR_BIN_ID_HERE" || score <= 0) return;
+
+        try {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+            });
+            const data = await res.json();
+            let scores = data.record || [];
+
+            const existingIdx = scores.findIndex(s => s.name === name);
+            if (existingIdx !== -1) {
+                if (score > scores[existingIdx].score) {
+                    scores[existingIdx].score = score;
+                }
+            } else {
+                scores.push({ name, score });
+            }
+
+            await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': JSONBIN_MASTER_KEY
+                },
+                body: JSON.stringify(scores)
+            });
+
+            fetchPublicLeaderboard();
+        } catch (err) {
+            console.error("Score submission error:", err);
         }
     }
 
@@ -563,7 +603,7 @@
     function closeGame() {
         document.getElementById('hub-view').style.display = 'block';
         document.getElementById('game-stage').style.display = 'none';
-        renderLeaderboard();
+        fetchPublicLeaderboard();
     }
 
     function restartCurrentGame() {
@@ -660,11 +700,13 @@
             currentScore += 300;
             currentRound++;
 
+            const playerName = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
             if (currentScore > highScore) {
                 highScore = currentScore;
                 localStorage.setItem('inkade_crossword_highscore', highScore);
             }
 
+            submitPublicScore(playerName, currentScore);
             updateScoreDisplay();
             
             showCustomModal("EXCELLENT!", "Correct answer! Advancing to the next edition with a new layout.", function() {

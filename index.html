@@ -6,26 +6,6 @@
     <title>THE DAILY INKADE - Newspaper Arcade Games</title>
     <style>
         body {
-
-<!-- STARTUP EDITOR NAME POPUP -->
-<div id="welcome-modal" class="modal-overlay" style="display: flex;">
-    <div class="modal-box">
-        <h3 class="modal-title">DAILY INKADE REGISTRATION</h3>
-        <p class="modal-body">Welcome, Chief Editor! Enter your details to record your official high scores.</p>
-        <div style="text-align: left; margin-bottom: 15px;">
-            <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">EDITOR NAME (REQUIRED):</label>
-            <input type="text" id="popup-player-name" placeholder="e.g. Jane Doe" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
-        </div>
-
-        <div style="text-align: left; margin-bottom: 20px;">
-            <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">GMAIL / EMAIL (OPTIONAL - FOR TOP SCORES):</label>
-            <input type="email" id="popup-player-email" placeholder="e.g. editor@gmail.com" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
-        </div>
-
-        <button class="action-btn submit" onclick="savePlayerCredentials()">START READING & PLAYING</button>
-    </div>
-</div>
-
             background-color: #f4ebd9;
             color: #111;
             font-family: 'Courier New', Courier, monospace;
@@ -88,7 +68,8 @@
         .game-card h3 {
             font-family: 'Times New Roman', Times, serif;
             margin: 0 0 5px 0;
-            font-size: 1.2rem;
+            padding-right: 60px;
+            font-size: 1.1rem;
             text-transform: uppercase;
             border-bottom: 1px solid #444;
         }
@@ -99,18 +80,49 @@
             color: #444;
         }
 
-       .badge {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: #222;
-        color: #f4ebd9;
-        font-size: 0.55rem;       /* Reduced font size */
-        padding: 1px 2px;         /* Reduced padding */
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-         pointer-events: none;     /* Ensures it doesn't block clicks */
-       }
+        .badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #222;
+            color: #f4ebd9;
+            font-size: 0.55rem;
+            padding: 1px 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        /* Leaderboard Box */
+        .leaderboard-section {
+            background: #eae2d0;
+            border: 2px solid #222;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .leaderboard-title {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            border-bottom: 1px dashed #222;
+            padding-bottom: 4px;
+            margin-top: 0;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dotted #888;
+        }
 
         /* Active Stage View */
         #game-stage {
@@ -285,12 +297,21 @@
     <h1>THE DAILY INKADE</h1>
     <div class="masthead">
         <span>EDITION #001</span>
-        <span>EDITOR: <input type="text" id="playerName" value="PLAYER ONE" style="font-family:inherit; border:none; background:transparent; font-weight:bold; width:110px;"></span>
+        <span>EDITOR: <input type="text" id="playerName" value="PLAYER ONE" onchange="updateEditorName(this.value)" style="font-family:inherit; border:none; background:transparent; font-weight:bold; width:140px;"></span>
         <span>INFINITE GENERAL KNOWLEDGE</span>
     </div>
 
     <!-- MAIN HUB DASHBOARD -->
     <div id="hub-view">
+
+        <!-- LEADERBOARD COMPONENT -->
+        <div class="leaderboard-section">
+            <h3 class="leaderboard-title">📰 TOP EDITORIAL SCORES (LEADERBOARD)</h3>
+            <ul class="leaderboard-list" id="leaderboard-list">
+                <li><span>1. No records set yet!</span><span>0 PTS</span></li>
+            </ul>
+        </div>
+
         <div class="hub-grid">
             <div class="game-card" onclick="openGame(1)">
                 <span class="badge">PLAY NOW</span>
@@ -348,6 +369,26 @@
         </div>
     </div>
 
+    <!-- STARTUP EDITOR NAME POPUP -->
+    <div id="welcome-modal" class="modal-overlay" style="display: flex;">
+        <div class="modal-box">
+            <h3 class="modal-title">DAILY INKADE REGISTRATION</h3>
+            <p class="modal-body">Welcome, Chief Editor! Enter your details to record your official high scores.</p>
+            
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">EDITOR NAME (REQUIRED):</label>
+                <input type="text" id="popup-player-name" placeholder="e.g. Jane Doe" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
+            </div>
+
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">GMAIL / EMAIL (OPTIONAL - FOR TOP SCORES):</label>
+                <input type="email" id="popup-player-email" placeholder="e.g. editor@gmail.com" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
+            </div>
+
+            <button class="action-btn submit" onclick="savePlayerCredentials()">START READING & PLAYING</button>
+        </div>
+    </div>
+
     <script>
     let currentScore = 0;
     let highScore = localStorage.getItem('inkade_crossword_highscore') ? parseInt(localStorage.getItem('inkade_crossword_highscore')) : 0;
@@ -357,7 +398,7 @@
     let lastPuzzleIndex = -1;
     let modalCallback = null;
 
-    // 100% SOLVABLE CROSSWORD DATA POOL (Native JavaScript)
+    // 100% SOLVABLE CROSSWORD DATA POOL
     const crosswordPool = [
         {
             grid: [
@@ -424,6 +465,63 @@
         }
     ];
 
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedName = localStorage.getItem('inkade_player_name');
+        if (savedName) {
+            document.getElementById('playerName').value = savedName;
+            document.getElementById('welcome-modal').style.display = 'none';
+        } else {
+            document.getElementById('welcome-modal').style.display = 'flex';
+        }
+        renderLeaderboard();
+    });
+
+    function updateEditorName(newName) {
+        localStorage.setItem('inkade_player_name', newName);
+        renderLeaderboard();
+    }
+
+    function savePlayerCredentials() {
+        const nameInput = document.getElementById('popup-player-name').value.trim();
+        const emailInput = document.getElementById('popup-player-email').value.trim();
+
+        if (!nameInput) {
+            alert("Please enter an Editor Name to continue!");
+            return;
+        }
+
+        localStorage.setItem('inkade_player_name', nameInput);
+        if (emailInput) {
+            localStorage.setItem('inkade_player_email', emailInput);
+        }
+
+        document.getElementById('playerName').value = nameInput;
+        document.getElementById('welcome-modal').style.display = 'none';
+        renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+        const listElem = document.getElementById('leaderboard-list');
+        const playerName = localStorage.getItem('inkade_player_name') || 'PLAYER ONE';
+        const topScore = parseInt(localStorage.getItem('inkade_crossword_highscore') || '0');
+
+        if (topScore > 0) {
+            listElem.innerHTML = `
+                <li>
+                    <span>🥇 <strong>${playerName}</strong> (General Knowledge Crossword)</span>
+                    <span><strong>${topScore} PTS</strong></span>
+                </li>
+            `;
+        } else {
+            listElem.innerHTML = `
+                <li>
+                    <span>1. <strong>${playerName}</strong> - Play a game to record your score!</span>
+                    <span>0 PTS</span>
+                </li>
+            `;
+        }
+    }
+
     function showCustomModal(title, text, onContinue) {
         document.getElementById('modal-heading').innerText = title;
         document.getElementById('modal-message').innerText = text;
@@ -465,6 +563,7 @@
     function closeGame() {
         document.getElementById('hub-view').style.display = 'block';
         document.getElementById('game-stage').style.display = 'none';
+        renderLeaderboard();
     }
 
     function restartCurrentGame() {
@@ -600,43 +699,6 @@
         document.getElementById('news-report').innerText = report;
         document.getElementById('game-over-box').style.display = 'block';
     }
-
-    // Automatically load saved credentials when the page opens
-window.addEventListener('DOMContentLoaded', () => {
-    const savedName = localStorage.getItem('inkade_player_name');
-    const savedEmail = localStorage.getItem('inkade_player_email');
-
-    if (savedName) {
-        // If the player already entered their name before, hide popup and fill masthead
-        document.getElementById('playerName').value = savedName;
-        document.getElementById('welcome-modal').style.display = 'none';
-    } else {
-        // Show welcome popup for new players
-        document.getElementById('welcome-modal').style.display = 'flex';
-    }
-});
-
-function savePlayerCredentials() {
-    const nameInput = document.getElementById('popup-player-name').value.trim();
-    const emailInput = document.getElementById('popup-player-email').value.trim();
-
-    if (!nameInput) {
-        alert("Please enter an Editor Name to continue!");
-        return;
-    }
-
-    // Save to browser memory (100% free)
-    localStorage.setItem('inkade_player_name', nameInput);
-    if (emailInput) {
-        localStorage.setItem('inkade_player_email', emailInput);
-    }
-
-    // Update the Editor field in the newspaper masthead
-    document.getElementById('playerName').value = nameInput;
-
-    // Close the popup
-    document.getElementById('welcome-modal').style.display = 'none';
-}
     </script>
 </body>
 </html>

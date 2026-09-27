@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE DAILY INKADE - 15 Newspaper Arcade Games</title>
+    <title>THE DAILY INKADE - Newspaper Arcade Games</title>
     <style>
         body {
+
+<!-- STARTUP EDITOR NAME POPUP -->
+<div id="welcome-modal" class="modal-overlay" style="display: flex;">
+    <div class="modal-box">
+        <h3 class="modal-title">DAILY INKADE REGISTRATION</h3>
+        <p class="modal-body">Welcome, Chief Editor! Enter your details to record your official high scores.</p>
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">EDITOR NAME (REQUIRED):</label>
+            <input type="text" id="popup-player-name" placeholder="e.g. Jane Doe" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
+        </div>
+
+        <div style="text-align: left; margin-bottom: 20px;">
+            <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 4px;">GMAIL / EMAIL (OPTIONAL - FOR TOP SCORES):</label>
+            <input type="email" id="popup-player-email" placeholder="e.g. editor@gmail.com" style="width: 100%; padding: 8px; font-family: inherit; border: 1px solid #222; box-sizing: border-box;">
+        </div>
+
+        <button class="action-btn submit" onclick="savePlayerCredentials()">START READING & PLAYING</button>
+    </div>
+</div>
+
             background-color: #f4ebd9;
             color: #111;
             font-family: 'Courier New', Courier, monospace;
@@ -79,16 +99,18 @@
             color: #444;
         }
 
-        .badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #222;
-            color: #f4ebd9;
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            text-transform: uppercase;
-        }
+       .badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #222;
+        color: #f4ebd9;
+        font-size: 0.55rem;       /* Reduced font size */
+        padding: 1px 2px;         /* Reduced padding */
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+         pointer-events: none;     /* Ensures it doesn't block clicks */
+       }
 
         /* Active Stage View */
         #game-stage {
@@ -578,6 +600,43 @@
         document.getElementById('news-report').innerText = report;
         document.getElementById('game-over-box').style.display = 'block';
     }
+
+    // Automatically load saved credentials when the page opens
+window.addEventListener('DOMContentLoaded', () => {
+    const savedName = localStorage.getItem('inkade_player_name');
+    const savedEmail = localStorage.getItem('inkade_player_email');
+
+    if (savedName) {
+        // If the player already entered their name before, hide popup and fill masthead
+        document.getElementById('playerName').value = savedName;
+        document.getElementById('welcome-modal').style.display = 'none';
+    } else {
+        // Show welcome popup for new players
+        document.getElementById('welcome-modal').style.display = 'flex';
+    }
+});
+
+function savePlayerCredentials() {
+    const nameInput = document.getElementById('popup-player-name').value.trim();
+    const emailInput = document.getElementById('popup-player-email').value.trim();
+
+    if (!nameInput) {
+        alert("Please enter an Editor Name to continue!");
+        return;
+    }
+
+    // Save to browser memory (100% free)
+    localStorage.setItem('inkade_player_name', nameInput);
+    if (emailInput) {
+        localStorage.setItem('inkade_player_email', emailInput);
+    }
+
+    // Update the Editor field in the newspaper masthead
+    document.getElementById('playerName').value = nameInput;
+
+    // Close the popup
+    document.getElementById('welcome-modal').style.display = 'none';
+}
     </script>
 </body>
 </html>
